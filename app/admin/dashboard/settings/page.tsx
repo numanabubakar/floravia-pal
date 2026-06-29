@@ -169,13 +169,15 @@ export default function AdminSettingsPage() {
       const { createClient } = await import('@/utils/supabase/client');
       const supabase = createClient();
 
-      if (user.id === 'super-admin') {
+      if (user.email === 'admin@floravia.com') {
         // Find if admin@floravia.com exists in members
-        const { data: existingAdmin } = await supabase
+        const { data, error: fetchErr } = await supabase
           .from('members')
           .select('*')
-          .eq('email', 'admin@floravia.com')
-          .single();
+          .eq('email', 'admin@floravia.com');
+
+        if (fetchErr) throw fetchErr;
+        const existingAdmin = data && data.length > 0 ? data[0] : null;
 
         if (existingAdmin) {
           const { error } = await supabase
@@ -188,7 +190,7 @@ export default function AdminSettingsPage() {
             .from('members')
             .insert({
               id: crypto.randomUUID(),
-              name: 'Super Admin',
+              name: 'Admin User',
               email: 'admin@floravia.com',
               role: 'admin',
               status: 'active',

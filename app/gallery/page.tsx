@@ -82,6 +82,7 @@ const mockGalleryItems: NonKitGalleryItem[] = [
 
 export default function GalleryPage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [mediaItems, setMediaItems] = useState<NonKitGalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'all' | 'kits' | 'seminars' | 'interviews'>('all');
 
@@ -91,7 +92,30 @@ export default function GalleryPage() {
         const supabase = createClient();
         const { data, error } = await supabase.from('products').select('*');
         if (error) throw error;
-        if (data) setProducts(data);
+        if (data) {
+          const kits: Product[] = [];
+          const media: NonKitGalleryItem[] = [];
+
+          data.forEach((item: any) => {
+            const isMedia = item.contents && !Array.isArray(item.contents) && item.contents.mediaType;
+            if (isMedia) {
+              media.push({
+                id: item.id,
+                name: item.name,
+                type: item.contents.mediaType,
+                description: item.description,
+                imageUrl: item.imageUrl,
+                date: item.contents.date,
+                location: item.contents.location,
+              });
+            } else {
+              kits.push(item);
+            }
+          });
+
+          setProducts(kits);
+          setMediaItems([...media, ...mockGalleryItems]);
+        }
       } catch (err) {
         console.error('Error fetching products:', err);
       } finally {
@@ -239,7 +263,7 @@ export default function GalleryPage() {
                 ))}
 
               {/* Render Seminars & Workshops / Interviews */}
-              {mockGalleryItems
+              {mediaItems
                 .filter((item) => {
                   if (activeTab === 'all') return true;
                   if (activeTab === 'seminars' && (item.type === 'seminar' || item.type === 'workshop')) return true;
