@@ -11,6 +11,7 @@ import { HeartLoader } from '@/components/ui/heart-loader';
 import { Footer } from '@/components/footer';
 import { TypingText } from '@/components/ui/typing-text';
 import Swal from 'sweetalert2';
+import { Navbar } from '@/components/navbar';
 
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -55,39 +56,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition">
-            <Image
-              src="/floravia.png"
-              alt="Floravia Pal Logo"
-              width={32}
-              height={32}
-              className="w-8 h-8 object-cover rounded-full"
-            />
-            <span className="text-2xl font-bold text-primary">Floravia Pal</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="#about" className="text-foreground hover:text-primary transition">
-              Mission
-            </Link>
-            <Link href="#products" className="text-foreground hover:text-primary transition">
-              Our Kits
-            </Link>
-            <Link href="/stories" className="text-foreground hover:text-primary transition">
-              Stories
-            </Link>
-            <Link href="/community" className="text-foreground hover:text-primary transition">
-              Team
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/donate">
-              <Button size="sm">Donate</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Hero Section */}
       <section className="relative overflow-hidden">

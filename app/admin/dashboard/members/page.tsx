@@ -264,22 +264,28 @@ export default function AdminMembersPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-semibold text-foreground mb-2">Role</label>
-                  <input
-                    type="text"
+                  <select
                     value={formData.role}
                     onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                    placeholder="e.g., Project Lead, Volunteer"
                     className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:border-primary"
-                  />
+                  >
+                    <option value="">Select Role</option>
+                    <option value="admin">Admin</option>
+                    <option value="moderator">Moderator</option>
+                    <option value="volunteer">Volunteer</option>
+                    <option value="member">Member</option>
+                  </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Bio</label>
+                <label className="block text-sm font-semibold text-foreground mb-2">
+                  {formData.role === 'admin' ? 'Password (For Admin Login)' : 'Bio'}
+                </label>
                 <textarea
                   value={formData.bio}
                   onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                  placeholder="Enter member bio"
+                  placeholder={formData.role === 'admin' ? 'Enter login password for this admin' : 'Enter member bio'}
                   rows={4}
                   className="w-full px-4 py-2 rounded-lg border border-border bg-background text-foreground focus:outline-none focus:border-primary"
                 />
@@ -344,7 +350,9 @@ export default function AdminMembersPage() {
                       <p className="text-sm text-primary font-medium">{member.role}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground">{member.bio}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {member.role === 'admin' ? 'Password: ••••••••' : member.bio}
+                  </p>
                   <div className="flex gap-2 pt-4">
                     <Button size="sm" variant="outline" onClick={() => handleEdit(member)}>
                       <Edit className="w-4 h-4 mr-1" /> Edit

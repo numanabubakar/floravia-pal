@@ -6,44 +6,45 @@ import Image from 'next/image';
 import { Mail } from 'lucide-react';
 import { Footer } from '@/components/footer';
 import { TypingText } from '@/components/ui/typing-text';
+import { Navbar } from '@/components/navbar';
+import { useState, useEffect } from 'react';
+import { createClient } from '@/utils/supabase/client';
 
 export default function DonatePage() {
+  const [details, setDetails] = useState({
+    jazzcashNumber: '03001234567',
+    jazzcashTitle: 'Floravia Pal Foundation',
+    bankName: 'Meezan Bank Limited',
+    bankTitle: 'Floravia Pal Foundation',
+    bankIban: 'PK23MEZN0012345678901234',
+    whatsappNumber: '923001234567',
+    email: 'hello@floravia.com',
+  });
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from('donations')
+          .select('*')
+          .eq('id', '__donation_settings__')
+          .single();
+        if (data && data.message) {
+          const parsed = JSON.parse(data.message);
+          setDetails((prev) => ({ ...prev, ...parsed }));
+        }
+      } catch (err) {
+        console.error('Error fetching payment details:', err);
+      }
+    };
+    fetchDetails();
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 hover:opacity-90 transition">
-            <Image
-              src="/floravia.png"
-              alt="Floravia Pal Logo"
-              width={32}
-              height={32}
-              className="w-8 h-8 object-cover rounded-full"
-            />
-            <span className="text-2xl font-bold text-primary">Floravia Pal</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-8">
-            <Link href="/#about" className="text-foreground hover:text-primary transition">
-              Mission
-            </Link>
-            <Link href="/#products" className="text-foreground hover:text-primary transition">
-              Our Kits
-            </Link>
-            <Link href="/stories" className="text-foreground hover:text-primary transition">
-              Stories
-            </Link>
-            <Link href="/community" className="text-foreground hover:text-primary transition">
-              Team
-            </Link>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link href="/donate">
-              <Button size="sm" className="bg-primary text-primary-foreground font-semibold">Donate</Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* Header */}
       <section className="bg-secondary/30 py-12">
@@ -94,11 +95,11 @@ export default function DonatePage() {
                 <div className="space-y-3 text-sm text-foreground">
                   <div className="flex justify-between border-b border-border pb-2">
                     <span className="text-muted-foreground">Account Name:</span>
-                    <span className="font-semibold">Floravia Pal Foundation</span>
+                    <span className="font-semibold">{details.jazzcashTitle}</span>
                   </div>
                   <div className="flex justify-between border-b border-border pb-2">
                     <span className="text-muted-foreground">JazzCash Number:</span>
-                    <span className="font-semibold text-primary select-all">+92 300 1234567</span>
+                    <span className="font-semibold text-primary select-all">{details.jazzcashNumber}</span>
                   </div>
                   <div className="flex justify-between pb-2">
                     <span className="text-muted-foreground">Reference Note:</span>
@@ -116,15 +117,15 @@ export default function DonatePage() {
                 <div className="space-y-3 text-sm text-foreground">
                   <div className="flex justify-between border-b border-border pb-2">
                     <span className="text-muted-foreground">Bank Name:</span>
-                    <span className="font-semibold">Meezan Bank Limited</span>
+                    <span className="font-semibold">{details.bankName}</span>
                   </div>
                   <div className="flex justify-between border-b border-border pb-2">
                     <span className="text-muted-foreground">Account Title:</span>
-                    <span className="font-semibold">Floravia Pal Foundation</span>
+                    <span className="font-semibold">{details.bankTitle}</span>
                   </div>
                   <div className="flex justify-between pb-2">
                     <span className="text-muted-foreground">IBAN / Account Number:</span>
-                    <span className="font-semibold select-all">PK23MEZN0012345678901234</span>
+                    <span className="font-semibold select-all">{details.bankIban}</span>
                   </div>
                 </div>
               </div>
@@ -139,7 +140,7 @@ export default function DonatePage() {
 
                   <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <a
-                      href="https://wa.me/923001234567?text=Hi%20Floravia%20Pal,%20here%20is%20my%20donation%20receipt."
+                      href={`https://wa.me/${details.whatsappNumber}?text=Hi%20Floravia%20Pal,%20here%20is%20my%20donation%20receipt.`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-[#25D366] hover:bg-[#20ba56] text-white font-bold text-sm transition shadow-sm gap-2"
@@ -150,7 +151,7 @@ export default function DonatePage() {
                       Send via WhatsApp
                     </a>
                     <a
-                      href="mailto:hello@floravia.com?subject=Donation%20Receipt&body=Hi%20Floravia%20Pal,%20attached%20is%20my%20donation%20receipt."
+                      href={`mailto:${details.email}?subject=Donation%20Receipt&body=Hi%20Floravia%20Pal,%20attached%20is%20my%20donation%20receipt.`}
                       className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-primary hover:bg-primary/95 text-white font-bold text-sm transition shadow-sm gap-2"
                     >
                       <Mail className="w-5 h-5" />

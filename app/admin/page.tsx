@@ -20,11 +20,12 @@ export default function AdminLoginPage() {
     }
   }, [isAuthenticated, router]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    if (login(email, password)) {
+    const success = await login(email, password);
+    if (success) {
       router.push('/admin/dashboard');
     } else {
       setError('Invalid email or password. Try admin@floravia.com / admin123');

@@ -27,8 +27,34 @@ export function useAuth() {
     setIsLoading(false);
   }, []);
 
-  const login = (email: string, password: string) => {
-    // Mock login - in production, this would call an API
+  const login = async (email: string, password: string) => {
+    try {
+      const { createClient } = await import('@/utils/supabase/client');
+      const supabase = createClient();
+      const { data, error } = await supabase
+        .from('members')
+        .select('*')
+        .eq('email', email.trim().toLowerCase())
+        .eq('role', 'admin')
+        .eq('status', 'active');
+
+      if (data && data.length > 0) {
+        const foundAdmin = data[0];
+        if (foundAdmin.bio === password) {
+          const loggedUser = {
+            id: foundAdmin.id,
+            email: foundAdmin.email,
+            name: foundAdmin.name,
+          };
+          setUser(loggedUser);
+          localStorage.setItem('auth_user', JSON.stringify(loggedUser));
+          return true;
+        }
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+    }
+
     if (email === 'admin@floravia.com' && password === 'admin123') {
       setUser(MOCK_ADMIN);
       localStorage.setItem('auth_user', JSON.stringify(MOCK_ADMIN));

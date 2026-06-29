@@ -31,7 +31,9 @@ export default function AdminDonationsPage() {
         .select('*')
         .order('date', { ascending: false });
       if (error) throw error;
-      if (data) setDonations(data);
+      if (data) {
+        setDonations(data.filter((d: any) => d.id !== '__donation_settings__'));
+      }
     } catch (err) {
       console.error('Error fetching donations:', err);
     } finally {
