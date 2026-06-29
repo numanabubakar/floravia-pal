@@ -28,7 +28,7 @@ export default function AdminLoginPage() {
     if (success) {
       router.push('/admin/dashboard');
     } else {
-      setError('Invalid email or password. Try admin@floravia.com / admin123');
+      setError('Invalid email or password.');
     }
   };
 
@@ -61,7 +61,7 @@ export default function AdminLoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-3 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="admin@floravia.com"
+                placeholder="Enter your email"
               />
             </div>
 
