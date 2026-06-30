@@ -23,7 +23,10 @@ export default function Home() {
         const supabase = createClient();
         const { data, error } = await supabase.from('products').select('*');
         if (error) throw error;
-        if (data) setProducts(data);
+        if (data) {
+          const kitsOnly = data.filter((item: any) => Array.isArray(item.contents));
+          setProducts(kitsOnly);
+        }
       } catch (err) {
         console.error('Error fetching products:', err);
       } finally {
